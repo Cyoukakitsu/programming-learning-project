@@ -1,9 +1,12 @@
-import React from "react";
 import { Menubar } from "primereact/menubar";
 import { InputText } from "primereact/inputtext";
 import { Badge } from "primereact/badge";
+import { Button } from "primereact/button";
+
+import useThemeSwitcher from "./useThemeSwitcher";
 
 export default function NavBar() {
+  const { currentTheme, toggleTheme } = useThemeSwitcher();
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link">
       <span className={item.icon} />
@@ -39,6 +42,11 @@ export default function NavBar() {
         placeholder="Search"
         type="text"
         className="w-8rem sm:w-auto"
+      />
+      <Button
+        icon={`pi ${currentTheme === "light" ? "pi-sun" : "pi-moon"}`}
+        style={{ marginLeft: "1.5rem" }}
+        onClick={toggleTheme}
       />
     </div>
   );
