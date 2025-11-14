@@ -5,7 +5,7 @@ import { Button } from "primereact/button";
 
 import useThemeSwitcher from "./useThemeSwitcher";
 
-export default function NavBar() {
+export default function NavBar({ setVisible }) {
   const { currentTheme, toggleTheme } = useThemeSwitcher();
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link">
@@ -25,6 +25,9 @@ export default function NavBar() {
       icon: "pi pi-cart-arrow-down",
       badge: 3,
       template: itemRenderer,
+      command: () => {
+        setVisible(true);
+      },
     },
   ];
 
