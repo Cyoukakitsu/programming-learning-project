@@ -5,9 +5,19 @@ import { Rating } from "primereact/rating";
 import { Tag } from "primereact/tag";
 import { classNames } from "primereact/utils";
 import { ProductService } from "../service/ProductService";
+import { useLocalStorage } from "react-use";
 
-export default function ShopList() {
+export default function ShopList({ show }) {
   const [products, setProducts] = useState([]);
+
+  const [cartList, setCartList] = useLocalStorage("cart-list", []);
+
+  function addToCart(product) {
+    const newCartList = [...cartList, product];
+    console.log(newCartList);
+
+    show();
+  }
 
   useEffect(() => {
     ProductService.getProducts().then((data) => setProducts(data));
@@ -64,6 +74,15 @@ export default function ShopList() {
                 icon="pi pi-shopping-cart"
                 className="p-button-rounded"
                 disabled={product.inventoryStatus === "OUTOFSTOCK"}
+                onClick={() =>
+                  addToCart({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    category: product.category,
+                  })
+                }
               ></Button>
             </div>
           </div>
