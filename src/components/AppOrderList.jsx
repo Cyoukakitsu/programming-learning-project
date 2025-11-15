@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { OrderList } from "primereact/orderlist";
 import { ProductService } from "../service/ProductService";
+import { useLocalStorage } from "react-use";
 
 export default function BasicDemo() {
-  const [products, setProducts] = useState([]);
+  const [cartList] = useLocalStorage("cart-list", []);
 
-  useEffect(() => {
-    ProductService.getProductsSmall().then((data) => setProducts(data));
-  }, []);
+  const [products, setProducts] = useState(cartList);
+
+  // useEffect(() => {
+  //   ProductService.getProductsSmall().then((data) => setProducts(data));
+  // }, []);
 
   const itemTemplate = (item) => {
     return (

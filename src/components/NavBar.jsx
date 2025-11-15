@@ -4,9 +4,12 @@ import { Badge } from "primereact/badge";
 import { Button } from "primereact/button";
 
 import useThemeSwitcher from "./useThemeSwitcher";
+import { useSelector } from "react-redux";
 
 export default function NavBar({ setVisible }) {
   const { currentTheme, toggleTheme } = useThemeSwitcher();
+
+  const cartListStore = useSelector((state) => state.cartList);
   const itemRenderer = (item) => (
     <a className="flex align-items-center p-menuitem-link">
       <span className={item.icon} />
@@ -23,7 +26,7 @@ export default function NavBar({ setVisible }) {
     {
       label: "Cart",
       icon: "pi pi-cart-arrow-down",
-      badge: 3,
+      badge: cartListStore.length > 0 ? cartListStore.length : null,
       template: itemRenderer,
       command: () => {
         setVisible(true);

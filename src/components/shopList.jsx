@@ -6,17 +6,29 @@ import { Tag } from "primereact/tag";
 import { classNames } from "primereact/utils";
 import { ProductService } from "../service/ProductService";
 import { useLocalStorage } from "react-use";
+import { Show } from "../utils/toastHelper";
+import { useDispatch } from "react-redux";
+import { append } from "./cartListSlice";
 
-export default function ShopList({ show }) {
+export default function ShopList({ toast }) {
   const [products, setProducts] = useState([]);
+  const dispatch = useDispatch();
 
   const [cartList, setCartList] = useLocalStorage("cart-list", []);
 
   function addToCart(product) {
-    const newCartList = [...cartList, product];
-    console.log(newCartList);
+    const currentCartList = Array.isArray(cartList) ? cartList : [];
+    if (currentCartList.some((item) => Number(item.id) === Number(product.id))) {
+      Show(toast, "The product is already in the cart!", "error", 3000);
+      return;
+    }
 
-    show();
+    const newCartList = [...currentCartList, product];
+
+    setCartList(newCartList);
+    dispatch(append(product));
+
+    Show(toast, "Successfully added to cart");
   }
 
   useEffect(() => {
@@ -74,15 +86,17 @@ export default function ShopList({ show }) {
                 icon="pi pi-shopping-cart"
                 className="p-button-rounded"
                 disabled={product.inventoryStatus === "OUTOFSTOCK"}
-                onClick={() =>
-                  addToCart({
+                onClick={() => {
+                  const productInfo = {
                     id: product.id,
                     name: product.name,
                     price: product.price,
                     image: product.image,
                     category: product.category,
-                  })
-                }
+                  };
+                  console.log(productInfo);
+                  addToCart(productInfo);
+                }}
               ></Button>
             </div>
           </div>

@@ -7,11 +7,15 @@ import "primeicons/primeicons.css";
 import { PrimeReactProvider } from "primereact/api";
 
 import "primeicons/primeicons.css";
+import { store } from "./app/store";
+import { Provider } from "react-redux";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <PrimeReactProvider>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </PrimeReactProvider>
   </StrictMode>
 );
