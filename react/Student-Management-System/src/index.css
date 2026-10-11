@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* 使用 @plugin 添加 daisyUI */
+
+@plugin "daisyui";
