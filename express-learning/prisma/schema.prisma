@@ -1,60 +1,80 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// 这是 Prisma 的 schema 文件:用文字描述数据库里有哪些表、每张表有哪些列。
+// 官方文档: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// 想快速获得一个免费的 Postgres 数据库: `npx create-db`
 
+// 生成器:告诉 Prisma 生成什么样的"客户端代码"。
+// 生成后,代码里就能写 prisma.user.create(...) 这样的语句,而不用手写 SQL。
 generator client {
   provider = "prisma-client-js"
 }
 
+// 数据源:使用哪种数据库。这里是 PostgreSQL。
+// 数据库的连接地址不写在这里,而是在 prisma.config.ts 里从 .env 读取(Prisma 7 的做法)。
 datasource db {
   provider = "postgresql"
 }
 
+// ==================== 用户表 ====================
 model User{
-  id String @id @default(uuid())
-  name String
-  email String @unique
-  password String
+  id String @id @default(uuid())   // 主键:每个用户的唯一编号。uuid() 自动生成一串随机且不重复的字符
+  name String                      // 用户名
+  email String @unique             // 邮箱。@unique 表示不允许两个用户使用同一个邮箱(登录时靠它找人)
+  password String                  // 密码。存的是 bcrypt 哈希后的结果,不是明文
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) // 注册时间。创建记录时自动填入当前时间
 
-  movies Movie[] @relation("MovieCreator")
-  watchListItems WatchListItem[]
+  // 下面两行不是真正的列,而是"关系",方便从用户出发查到相关数据:
+  movies Movie[] @relation("MovieCreator") // 该用户添加过的所有电影(一对多)
+  watchListItems WatchListItem[]           // 该用户清单里的所有条目(一对多)
 }
 
+// ==================== 电影表 ====================
 model Movie{
-  id String @id @default(uuid())
-  title String
-  overview String?
-  releaseYear Int
-  genres String[] @default([])
-  runtime Int?
-  posterUrl String?
-  createdBy String
-  createdAt DateTime @default(now())
+  id String @id @default(uuid())   // 主键:电影的唯一编号
+  title String                     // 电影标题(必填)
+  overview String?                 // 剧情简介。类型后面的 ? 表示可以为空
+  releaseYear Int                  // 上映年份(必填)
+  genres String[] @default([])     // 类型标签,是一个字符串数组,如 ["动作","科幻"]。默认是空数组
+  runtime Int?                     // 时长,单位通常是分钟(可为空)
+  posterUrl String?                // 海报图片地址(可为空)
+  createdBy String                 // 外键:添加这部电影的用户的 id,指向 User.id
+  createdAt DateTime @default(now()) // 添加时间
 
+  // creator 是"关系",不是真正的列:
+  //   fields: [createdBy]  本表用 createdBy 这一列
+  //   references: [id]     去对应 User 表的 id 列
+  //   onDelete: Cascade    级联删除:用户被删除时,他添加的电影也一并删除
   creator User @relation("MovieCreator",fields:[createdBy],references: [id],onDelete: Cascade)
-  watchListItems WatchListItem[]
+  watchListItems WatchListItem[]   // 哪些用户的清单里有这部电影
 }
 
+// ==================== 观影清单条目表 ====================
+// 这是"用户"和"电影"之间的中间表,用来表示多对多关系:
+// 一个用户可以收藏多部电影,一部电影也可以被多个用户收藏。
+// 每一行记录的是"某个用户对某部电影的状态、评分和备注"。
 model WatchListItem{
-  id String @id @default(uuid())
-  userId String
-  movieId String
-  status WatchListStatus @default(PLANNED)
-  rating Int?
-  notes String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now())
+  id String @id @default(uuid())   // 主键:条目的唯一编号
+  userId String                    // 外键:这是谁的清单,指向 User.id
+  movieId String                   // 外键:是哪部电影,指向 Movie.id
+  status WatchListStatus @default(PLANNED) // 观看状态,取值见文件底部的枚举。新加入时默认是"想看"
+  rating Int?                      // 评分(可为空,没看完可以不打分)
+  notes String?                    // 个人备注(可为空)
+  createdAt DateTime @default(now()) // 加入清单的时间
+  // 注意:@default(now()) 只在创建时填一次时间,之后修改记录它不会自动更新。
+  // 如果想让它每次修改都自动更新,应改成 @updatedAt。
+  updatedAt DateTime @default(now()) // 最后更新时间
 
+  // 与 User、Movie 的关系。任意一方被删除时,对应的清单条目也一并删除(Cascade)
   user User @relation(fields:[userId],references: [id],onDelete: Cascade)
   movie Movie @relation(fields:[movieId],references: [id],onDelete: Cascade)
 }
 
+// ==================== 观看状态(枚举) ====================
+// 枚举限定一个字段只能取下面这几个值之一,写错会被数据库拒绝。
 enum WatchListStatus{
-  PLANNED
-  WATCHING
-  COMPLETED
-  DROPPED
+  PLANNED    // 想看
+  WATCHING   // 正在看
+  COMPLETED  // 已看完
+  DROPPED    // 弃剧
 }
