@@ -13,6 +13,7 @@
 | --- | --- |
 | `L01-env` | 环境搭建，跑通第一个 Agent 会话（`01-hello.ts`） |
 | `L02-system-prompt` | 系统提示词：覆盖人设（`01-override.ts`）、静态文件 + 动态用户上下文多来源拼装（`02-layered-prompt.ts`），另含 `.pi/` 下的追加规则与 `refund-handling` 技能 |
+| `L03-tools` | 自定义工具：`defineTool` 三件事（说明书 / execute / 注册）、白名单 `setActiveToolsByName`（`01-query-data.ts`） |
 
 后续每节课会新增一个 `LXX-xxx` 目录。
 
@@ -30,5 +31,6 @@ npx tsx L02-system-prompt/02-layered-prompt.ts
 
 - [x] L01：环境与 Hello World
 - [x] L02：系统提示词（覆盖、追加、多来源拼装）
+- [x] L03：自定义工具（defineTool、参数校验、错误处理、白名单）
 - [ ] 继续学习 Pi Agent 的核心能力
 - [ ] 基于所学内容开发自己的 Agent
