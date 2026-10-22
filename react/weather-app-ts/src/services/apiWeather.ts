@@ -1,4 +1,6 @@
-const API_KEY = "0fa630f94cd447784146498e493aa38f";
+// OpenWeatherMap の API キーは .env.local の VITE_OPENWEATHER_API_KEY から読み込む
+// （注意：VITE_ 変数はビルド時にバンドルへ埋め込まれるため、公開デプロイ時はブラウザから見える）
+const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
 export async function getCurrentWeather(lat: number, lon: number) {
   try {
