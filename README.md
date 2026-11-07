@@ -10,6 +10,7 @@
 | `react/` | React 练习:EatSplit、UsePopcorn、weather-app、Student-Management-System、Fire-Calculator-v1.0、todo-app、zustand 等 |
 | `nextjs/` | Next.js 学习:nextjs-dashboard、nextjs-learncode、nextjs16、nextjs-learning-project、production_ready_app |
 | `express-learning/` | Express + Prisma 学习 |
+| `nestjs/` | NestJS 学习:nestjs-studymemo |
 | `testing/` | Vitest 测试练习 |
 | `ai-agent/` | AI Agent 学习笔记:AI_Agent_StudyMemo、pi-learning、pi-study-memo |
 | `图解HTTP.pdf` | 《图解HTTP》 |
